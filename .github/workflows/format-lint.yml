@@ -1,8 +1,10 @@
 # GitHub Action that verifies complience with Black formatting and Pylint rules
 
-name: black-complient
+name: format-lint
 on: [push]
 jobs:
+  black-job:
+  name: run black
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -19,13 +21,9 @@ jobs:
       - name: Run black --check .
         run: black --check .
 
-name: Pylint
-
-on: [push]
-
-jobs:
+  pylint-job:
+  name: run pylint
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
