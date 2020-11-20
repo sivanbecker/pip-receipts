@@ -1,6 +1,4 @@
-# GitHub Action that verifies complience with Black.
-# If all Python code in the pull request is compliant with Black then this Action does nothing.
-# Othewrwise, it action fails.
+# GitHub Action that verifies complience with Black formatting and Pylint rules
 
 name: black-complient
 on: [push]
@@ -20,3 +18,30 @@ jobs:
         run: pip install black
       - name: Run black --check .
         run: black --check .
+
+        name: Pylint
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with pylint
+      run: |
+        pylint *.py models/*.py resources/*.py schemas/*.py tests/*.py --rcfile .pylintrc
