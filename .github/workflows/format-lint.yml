@@ -19,7 +19,7 @@ jobs:
       - name: Run black --check .
         run: black --check .
 
-        name: Pylint
+name: Pylint
 
 on: [push]
 
