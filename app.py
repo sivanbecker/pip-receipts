@@ -1,12 +1,8 @@
 import os
-from flask import Flask, request
-from flask_restful import Resource, Api
-from datetime import datetime, date
-from marshmallow import Schema, fields
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
+from flask import Flask
+from flask_restful import Api
 
-from resources.provider import ProviderResource, ProviderListResource
+from resources.receipt_resource import ReceiptListResource, ReceiptResource
 
 SQLALCHEMY_DATABASE_URI = os.environ.get(
     "DATABASE_URL", os.environ.get("SQLALCHEMY_DATABASE_URI")
@@ -17,16 +13,19 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
-app.config["SERVICE_PROVIDERS_URL"] = os.environ.get("SERVICE_PROVIDERS_URL")
+app.config["RECEIPTS_URL"] = os.environ.get("RECEIPTS_URL")
 api = Api(app)
 
-api.add_resource(ProviderResource, "/provider/<string:mispar_osek>")
-api.add_resource(ProviderListResource, "/providers")
+api.add_resource(ReceiptResource, "/receipt/<string:uniq_str>")
+api.add_resource(ReceiptListResource, "/receipts")
 
 if __name__ == "__main__":
     from db import db
-    from schemas.provider import ma
+    from schemas.receipt_schema import ma
 
     db.init_app(app)
+    with app.app_context():
+        db.create_all()
+
     ma.init_app(app)
-    app.run(port=5000, debug=True)
+    app.run(port=os.environ.get("RECEIPTS_PORT"), debug=True)
