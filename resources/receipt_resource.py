@@ -9,14 +9,14 @@ from schemas.receipt_schema import receipt_schema, receipts_schema
 
 
 class ReceiptResource(Resource):
-    def get(self, number):
+    def get(self, number):  # pylint: disable=no-self-use
         try:
             _receipt = Receipt.query.filter_by(number=number).one()
             return {"receipt": receipt_schema.dump(_receipt)}
         except NoResultFound:
             return {"receipt": None}, 404
 
-    def post(self, number):
+    def post(self, number):  # pylint: disable=no-self-use
         if Receipt.query.filter_by(number=number).count():
             return {"message": "Receipt with number={number} already exists"}, 400
 
@@ -32,7 +32,7 @@ class ReceiptResource(Resource):
         except IntegrityError as exc:
             return {"message": str(exc)}
 
-    def put(self, number):
+    def put(self, number):  # pylint: disable=no-self-use
         data = request.get_json()
         try:
             _receipt = Receipt.query.filter_by(number=number).one()
@@ -47,7 +47,7 @@ class ReceiptResource(Resource):
             db.session.commit()
             return {"receipt": receipt_schema.dump(new_receipt)}, 201
 
-    def delete(self, number):
+    def delete(self, number):  # pylint: disable=no-self-use
         try:
             _receipt = Receipt.query.filter_by(number=number).one()
             db.session.delete(_receipt)
@@ -58,5 +58,5 @@ class ReceiptResource(Resource):
 
 
 class ReceiptListResource(Resource):
-    def get(self):
+    def get(self):  # pylint: disable=no-self-use
         return {"receipts": receipts_schema.dump(Receipt.query.all())}

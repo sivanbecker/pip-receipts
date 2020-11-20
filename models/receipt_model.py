@@ -1,5 +1,5 @@
-from db import db
 from datetime import datetime
+from db import db
 
 
 class Receipt(db.Model):
